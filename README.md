@@ -1,4 +1,4 @@
-# DS_HW3_List_of_Christmas_gifts
+# Data Structure Homework 3: List of Christmas gifts
 
 ## Description
 
