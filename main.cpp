@@ -8,11 +8,7 @@ private:
         int price;
         string gift;
         Node* next;
-        Node (int p = 0, string g = "\0", Node* n = nullptr){
-            price = p;
-            gift = g;
-            next = n;
-        };
+        Node (int p = 0, string g, Node* n = nullptr);
     };
     Node* first;
     Node* last;
@@ -45,13 +41,24 @@ public:
     void print ();
     bool empty();
 };
+
+List::Node::Node(int p, string g, List::Node *n) {
+    price = p;
+    gift = g;
+    next = n;
+}
+
 void List::insertBack(int price, string gift) {
+    if (search(price, false) != nullptr)
+        return;
     Node *temp = new Node(price, gift, nullptr);
     last->next = temp;
     last = temp;
     //print();
 }
 void List::insertAfter(int price, string gift, int prev) {
+    if (price == prev)
+        return;
     Node* currentNode = search(prev, false);
     if (currentNode != nullptr) {
         Node* newNode = new Node(price, gift, currentNode->next);
