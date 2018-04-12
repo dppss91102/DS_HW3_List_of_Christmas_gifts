@@ -62,7 +62,7 @@ Print:
 
 Connect with symbols `->`.  
 **No spaces** in between.  
-If it's empty, only need to print the first line.
+If it's `Empty`, only need to print the first line.
 
 *Sample Output:*
 ```
