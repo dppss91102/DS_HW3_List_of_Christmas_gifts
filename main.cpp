@@ -14,29 +14,19 @@ private:
             next = n;
         };
     };
-    class Head{
-    public:
-        Node* first;
-    };
-    Head head;
+    Node* first;
     Node* last;
-    Node* search(int price, bool previous) {
-        Node* now = head.first;
-        Node* temp = head.first;
-        while (now != nullptr) {
-            if (now->price == price)
-                return previous ? temp : now;
-            else {
-                temp = now;
+    Node* search(int price) {
+        Node* now = first;
+        while (now != nullptr && now->price != price) {
                 now = now->next;
-            }
         }
-        return nullptr;
+        return now;
     };
 
 public:
     List() {
-        head.first = nullptr;
+        first = nullptr;
         last = nullptr;
     };
     void insertBack(int price, string gift);
@@ -48,53 +38,55 @@ public:
 };
 void List::insertBack(int price, string gift) {
     if (empty()) {
-        head.first = new Node(price, gift, nullptr);
-        last = head.first;
-        //print();
+        first = new Node(price, gift, nullptr);
+        last = first;
         return;
     }
-    if (search(price, false) != nullptr)
+    if (search(price) != nullptr)
         return;
     Node *temp = new Node(price, gift, nullptr);
     last->next = temp;
     last = temp;
-    //print();
 }
 void List::insertAfter(int price, string gift, int place) {
     if (empty())
         return;
-    Node* currentNode = search(place, false);
+    if (search(price) != nullptr)
+        return;
+    Node* currentNode = search(place);
     if (currentNode != nullptr) {
         Node* temp = new Node(price, gift, currentNode->next);
         currentNode->next = temp;
         if (currentNode == last)
             last = temp;
     }
-    //print();
 }
 void List::Delete(int price) {
     if (empty())
         return;
-    Node* prevNode = search(price, true);
-    if (prevNode != nullptr) {
-        if (prevNode == last && prevNode == head.first) {
-            delete head.first;
-            head.first = nullptr;
-            last = nullptr;
-            return;
-        }
-        if (prevNode->next == last)
-            last = prevNode;
-        Node* temp = prevNode->next->next;
-        delete prevNode->next;
-        prevNode->next = temp;
+    Node *currentNode = first, *prevNode = nullptr;
+    while (currentNode != nullptr && currentNode->price != price) {
+        prevNode = currentNode;
+        currentNode = currentNode->next;
     }
-    //print();
+    if (currentNode == nullptr)
+        return;
+    else if (currentNode == first) {
+        first = currentNode->next;
+        delete currentNode;
+        currentNode = nullptr;
+    } else {
+        prevNode->next = currentNode->next;
+        if (currentNode == last)
+            last = prevNode;
+        delete currentNode;
+        currentNode = nullptr;
+    }
 }
 void List::Reverse() {
     if (empty())
         return;
-    Node *current = head.first, *prev = nullptr, *temp = nullptr;
+    Node *current = first, *prev = nullptr, *temp = nullptr;
     last = current;
     while (current != nullptr){
         temp = prev;
@@ -102,22 +94,26 @@ void List::Reverse() {
         current = current->next;
         prev->next = temp;
     }
-    head.first = prev;
-    //print();
+    first = prev;
 }
 void List::print() {
-    Node* now = head.first;
-    while (now != nullptr) {
-        cout << '(' << now->gift << ',' << now->price << ')';
-        now = now->next;
-        if (now == nullptr)
-            cout << endl;
-        else
-            cout << "->";
+    if (empty())
+        cout << "Empty" << endl;
+    else {
+        cout << "List" << endl;
+        Node *now = first;
+        while (now != nullptr) {
+            cout << '(' << now->gift << ',' << now->price << ')';
+            now = now->next;
+            if (now == nullptr)
+                cout << endl;
+            else
+                cout << "->";
+        }
     }
 }
 bool List::empty() {
-    return head.first == nullptr;
+    return first == nullptr;
 }
 
 int main() {
@@ -144,14 +140,10 @@ int main() {
         } else if (command == "Reverse") {
             gift_list.Reverse();
         } else if (command == "End") {
-            if (gift_list.empty())
-                cout << "Empty" << endl;
-            else {
-                cout << "List" << endl;
-                gift_list.print();
-            }
+            gift_list.print();
             return 0;
         } else
             return 0;
+        gift_list.print();
     }
 }
